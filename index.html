@@ -560,6 +560,9 @@
     <!-- =========================================================
          RESUME
     ========================================================= -->
+    <!-- =========================================================
+         RESUME
+    ========================================================= -->
     <section class="section" id="resume">
       <div class="container">
         <p class="section__eyebrow" data-reveal>Resume</p>
@@ -568,31 +571,29 @@
         <div class="resume__panel" data-reveal>
           <div class="resume__info">
             <h3>S. Kaviarasan — Data Analyst</h3>
-            <p>A concise, recruiter-friendly PDF covering my education, skills, tools and project
-              highlights. Replace <code>assets/S_Kaviarasan_Resume.pdf</code> with your latest file to
-              keep this button live.</p>
+            <p>A concise, recruiter-friendly PDF covering my education, skills, tools and project highlights.</p>
             <ul class="resume__list">
               <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Education &amp; certifications</li>
               <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Technical skills &amp; tools</li>
               <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Project highlights &amp; impact</li>
             </ul>
-            <a href="assets/S_Kaviarasan_Resume.pdf" download class="btn btn--primary">
-              <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-              Download Resume (PDF)
-            </a>
-          </div>
-          <div class="resume__preview" aria-hidden="true">
-            <div class="resume-sheet">
-              <div class="resume-sheet__line resume-sheet__line--title"></div>
-              <div class="resume-sheet__line resume-sheet__line--sub"></div>
-              <div class="resume-sheet__block"></div>
-              <div class="resume-sheet__line"></div>
-              <div class="resume-sheet__line"></div>
-              <div class="resume-sheet__line" style="width:70%"></div>
-              <div class="resume-sheet__block"></div>
-              <div class="resume-sheet__line"></div>
-              <div class="resume-sheet__line" style="width:55%"></div>
+            
+            <!-- Buttons for View & Download -->
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+              <a href="assets/S_Kaviarasan_Resume.pdf" target="_blank" rel="noopener noreferrer" class="btn btn--outline">
+                <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                View Resume
+              </a>
+              <a href="assets/S_Kaviarasan_Resume.pdf" download class="btn btn--primary">
+                <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+                Download Resume
+              </a>
             </div>
+          </div>
+          
+          <!-- Live PDF Preview Box -->
+          <div class="resume__preview">
+            <iframe src="assets/S_Kaviarasan_Resume.pdf" class="resume-pdf-viewer" title="S. Kaviarasan Resume"></iframe>
           </div>
         </div>
       </div>
