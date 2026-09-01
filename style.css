@@ -409,21 +409,11 @@ h1,h2,h3,h4{ font-weight: 600; line-height: 1.2; }
 .social-icon:hover{ color: var(--text); border-color: var(--secondary); transform: translateY(-3px); background: rgba(6,182,212,0.08); }
 
 /* Hero floating analytics console */
-.hero__content {
-  position: relative;
-  z-index: 10; /* Ithu buttons-a cards-ku mela kondu vanthu clickable aakkum */
-}
+.hero__content { position: relative; z-index: 10; }
 
-.hero__visual { 
-  position: relative; 
-  min-height: 340px; 
-  margin-top: 155px; /* Mobile-la buttons-kum cards-kum naduvula gap tharum */
-  z-index: 1; 
-}
-.console{
-  position: relative; width: 100%; height: 100%;
-  max-width: 460px; margin-inline: auto;
-}
+.hero__visual { position: relative; min-height: 340px; margin-top: 3.5rem; z-index: 1; }
+
+.console { position: relative; width: 100%; height: 100%; max-width: 500px; margin-inline: auto; }
 
 .float-card{
   position: absolute;
@@ -494,6 +484,7 @@ h1,h2,h3,h4{ font-weight: 600; line-height: 1.2; }
 .scroll-cue__mouse{ width: 24px; height: 38px; border: 2px solid var(--border-strong); border-radius: var(--radius-full); display: block; position: relative; }
 .scroll-cue__mouse span{ position: absolute; top: 6px; left: 50%; width: 4px; height: 8px; background: var(--secondary); border-radius: var(--radius-full); transform: translateX(-50%); animation: scrollDot 1.6s infinite; }
 @keyframes scrollDot{ 0%{ opacity: 1; top: 6px;} 70%{ opacity: 0; top: 18px;} 100%{ opacity: 0; top: 6px;} }
+
 
 /* -------------------------------------------------------------
    7. ABOUT
@@ -605,6 +596,47 @@ h1,h2,h3,h4{ font-weight: 600; line-height: 1.2; }
 /* -------------------------------------------------------------
    9. PROJECTS
 ------------------------------------------------------------- */
+/* --- PROJECT CAROUSEL STYLES --- */
+.project-carousel {
+  position: relative;
+  width: 100%;
+  height: auto; 
+  aspect-ratio: 400 / 240; /* SVG-oda adhe exact scale ratio */
+  overflow: hidden;
+  background: #141F35;
+}
+.carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s var(--ease);
+}
+.carousel-img {
+  min-width: 100%;
+  height: 100%;
+  object-fit: cover; /* Images stretch aagama fit aagum */
+}
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--border);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 0; /* Normal-a arrow hide aagi irukkum */
+  transition: opacity 0.3s var(--ease), background 0.3s;
+}
+.carousel-btn svg { width: 18px; height: 18px; }
+.project-card:hover .carousel-btn { opacity: 1; } /* Mouse vecha arrow theriyum */
+.carousel-btn:hover { background: var(--primary); }
+.prev-btn { left: 10px; }
+.next-btn { right: 10px; }
+
 .projects__grid{ display: grid; gap: 1.75rem; }
 
 .project-card{
@@ -903,4 +935,57 @@ body.modal-open{ overflow: hidden; }
 @media (max-width: 360px){
   .hero__title{ font-size: clamp(1.7rem, 8vw, 2rem); }
   .float-card{ padding: 0.85rem 0.9rem; }
+}
+/* --- PROJECT CAROUSEL STYLES --- */
+.project-carousel {
+  position: relative;
+  width: 100%;
+  height: auto; 
+  aspect-ratio: 400 / 240; /* Rendu card-um exactly ore height-la irukka */
+  overflow: hidden;
+  background: #141F35;
+}
+.carousel-track { display: flex; height: 100%; transition: transform 0.5s var(--ease); }
+.carousel-img { min-width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+.carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; opacity: 0; transition: opacity 0.3s var(--ease), background 0.3s; }
+.carousel-btn svg { width: 18px; height: 18px; }
+.project-card:hover .carousel-btn { opacity: 1; } 
+.carousel-btn:hover { background: var(--primary); }
+.prev-btn { left: 10px; }
+.next-btn { right: 10px; }
+
+/* --- IMAGE LIGHTBOX (CLICK TO REVEAL) --- */
+.lightbox { position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; padding: 1.5rem; }
+.lightbox.is-active { display: flex; animation: fadeIn 0.3s var(--ease); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.lightbox__overlay { position: absolute; inset: 0; background: rgba(4, 8, 20, 0.85); backdrop-filter: blur(8px); }
+.lightbox__img { position: relative; z-index: 1; max-width: 100%; max-height: 85vh; border-radius: var(--radius-md); box-shadow: var(--shadow-md); object-fit: contain; }
+.lightbox__close { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 2; width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); color: #fff; display: grid; place-items: center; cursor: pointer; transition: background var(--transition); }
+.lightbox__close:hover { background: rgba(239, 68, 68, 0.6); }
+/* Mobile screen-kaga special adjustments */
+@media (max-width: 768px) {
+  .console {
+    transform: scale(0.95) !important; 
+    transform-origin: top center !important;
+  }
+  .hero__visual {
+    margin-top: 8rem !important; /* Gap innum konjam athigam aakiruken */
+    min-height: 250px !important; 
+  }
+}
+/* --- TYPEWRITER CURSOR BLINK --- */
+.hero__role-container {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: var(--secondary, #06B6D4);
+  margin-bottom: 1.5rem;
+}
+.type-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  animation: typeBlink 0.8s step-end infinite;
+}
+@keyframes typeBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }

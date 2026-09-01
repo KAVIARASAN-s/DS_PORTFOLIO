@@ -4,10 +4,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // --- 1. NAVBAR SCROLL EFFECT & BACK TO TOP ---
+  // --- NAVBAR SCROLL & BACK TO TOP ---
   const navbar = document.getElementById('navbar');
   const backToTop = document.getElementById('backToTop');
-
   window.addEventListener('scroll', () => {
     if (window.scrollY > 50) {
       navbar.classList.add('is-scrolled');
@@ -18,62 +17,128 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  backToTop.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+  if (backToTop) {
+    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
 
-
-  // --- 2. MOBILE MENU (HAMBURGER) ---
+  // --- MOBILE MENU ---
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
   const navOverlay = document.getElementById('navOverlay');
   const navItems = document.querySelectorAll('.nav-link');
-
   function toggleMenu() {
     const isOpen = navLinks.classList.contains('is-open');
     navLinks.classList.toggle('is-open');
     navOverlay.classList.toggle('is-active');
     hamburger.setAttribute('aria-expanded', !isOpen);
   }
-
   if (hamburger) {
     hamburger.addEventListener('click', toggleMenu);
     navOverlay.addEventListener('click', toggleMenu);
-    
-    // Close menu when a link is clicked
-    navItems.forEach(link => {
-      link.addEventListener('click', () => {
-        if (navLinks.classList.contains('is-open')) toggleMenu();
-      });
-    });
+    navItems.forEach(link => link.addEventListener('click', () => { if (navLinks.classList.contains('is-open')) toggleMenu(); }));
   }
 
+  // --- ACTIVE MENU LINK (SCROLL SPY) ---
+  const sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      if (scrollY >= (section.offsetTop - 150)) current = section.getAttribute('id');
+    });
+    navItems.forEach(link => {
+      link.classList.remove('is-active');
+      if (link.getAttribute('href') === `#${current}`) link.classList.add('is-active');
+    });
+  });
 
-  // --- 3. SCROLL REVEAL ANIMATIONS (Fix for Blank Screen) ---
+  // --- SCROLL REVEAL ANIMATIONS ---
   const revealElements = document.querySelectorAll('[data-reveal]');
-  
-  const revealOptions = {
-    threshold: 0.1,
-    rootMargin: "0px 0px -50px 0px"
-  };
-
   const revealObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const delay = entry.target.getAttribute('data-reveal-delay');
-        if (delay) {
-          entry.target.style.transitionDelay = `${delay}ms`;
-        }
+        if (delay) entry.target.style.transitionDelay = `${delay}ms`;
         entry.target.classList.add('is-visible');
         observer.unobserve(entry.target);
       }
     });
-  }, revealOptions);
-
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
   revealElements.forEach(el => revealObserver.observe(el));
 
+  // --- PROGRESS BAR ANIMATIONS ---
+  const progressBars = document.querySelectorAll('.bar span[data-bar]');
+  const barObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.width = entry.target.getAttribute('data-bar') + '%';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  progressBars.forEach(bar => barObserver.observe(bar));
 
-  // --- 4. NUMBER COUNTERS ---
+  // --- MODALS (PROJECT DETAILS) ---
+  const openModalBtns = document.querySelectorAll('[data-modal-open]');
+  const closeBtns = document.querySelectorAll('[data-modal-close]');
+  const modals = document.querySelectorAll('.modal');
+  openModalBtns.forEach(btn => btn.addEventListener('click', () => {
+    document.getElementById(btn.getAttribute('data-modal-open')).classList.add('is-open');
+    document.body.style.overflow = 'hidden'; 
+  }));
+  closeBtns.forEach(btn => btn.addEventListener('click', () => {
+    modals.forEach(modal => modal.classList.remove('is-open'));
+    document.body.style.overflow = '';
+  }));
+
+  // --- PROJECT IMAGE CAROUSEL ---
+  const carousels = document.querySelectorAll('.project-carousel');
+  carousels.forEach(carousel => {
+    const track = carousel.querySelector('.carousel-track');
+    const images = carousel.querySelectorAll('.carousel-img');
+    const prevBtn = carousel.querySelector('.prev-btn');
+    const nextBtn = carousel.querySelector('.next-btn');
+    let currentIndex = 0;
+    const totalImages = images.length;
+    let interval;
+    
+    function updateCarousel() { track.style.transform = `translateX(-${currentIndex * 100}%)`; }
+    function nextSlide() { currentIndex = (currentIndex + 1) % totalImages; updateCarousel(); }
+    function prevSlide() { currentIndex = (currentIndex - 1 + totalImages) % totalImages; updateCarousel(); }
+    function startAutoSlide() { clearInterval(interval); interval = setInterval(nextSlide, 3000); }
+    function stopAutoSlide() { clearInterval(interval); }
+    
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+    carousel.addEventListener('mouseenter', stopAutoSlide);
+    carousel.addEventListener('mouseleave', startAutoSlide);
+    startAutoSlide();
+  });
+
+  // --- IMAGE LIGHTBOX (CLICK TO REVEAL) ---
+  const lightbox = document.getElementById('imageLightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxClose = document.getElementById('lightboxClose');
+  const lightboxOverlay = document.getElementById('lightboxOverlay');
+  const carouselImagesToClick = document.querySelectorAll('.carousel-img');
+
+  if (lightbox) {
+    carouselImagesToClick.forEach(img => {
+      img.addEventListener('click', () => {
+        lightboxImg.src = img.src;
+        lightbox.classList.add('is-active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+    const closeLightbox = () => {
+      lightbox.classList.remove('is-active');
+      document.body.style.overflow = '';
+      setTimeout(() => { lightboxImg.src = ''; }, 300); 
+    };
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxOverlay.addEventListener('click', closeLightbox);
+  }
+
+  // --- NUMBER COUNTERS ---
   const counters = document.querySelectorAll('[data-counter]');
   const counterObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
@@ -81,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const target = +entry.target.getAttribute('data-target');
         const suffix = entry.target.getAttribute('data-suffix') || '';
         let count = 0;
-        const speed = 100; // Adjust speed here
+        const speed = 30; // Speed of the counting animation
         const inc = target / speed;
 
         const updateCount = () => {
@@ -100,33 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.5 });
 
   counters.forEach(counter => counterObserver.observe(counter));
-
-
-  // --- 5. MODALS (PROJECT DETAILS) ---
-  const openModalBtns = document.querySelectorAll('[data-modal-open]');
-  const closeBtns = document.querySelectorAll('[data-modal-close]');
-  const modals = document.querySelectorAll('.modal');
-
-  openModalBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const modalId = btn.getAttribute('data-modal-open');
-      document.getElementById(modalId).classList.add('is-open');
-      document.body.classList.add('modal-open'); // Prevent background scrolling
-    });
-  });
-
-  closeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      modals.forEach(modal => modal.classList.remove('is-open'));
-      document.body.classList.remove('modal-open');
-    });
-  });
-
-
-  // --- 6. TYPING EFFECT (Hero Section) ---
-  const typedRole = document.getElementById('typedRole');
-  if (typedRole) {
-    const roles = ["Data Analyst", "Data Scientist", "Power BI Developer"];
+  // --- TYPEWRITER EFFECT ---
+  const typeWriterElement = document.getElementById('typewriter');
+  if (typeWriterElement) {
+    // Inga ungalukku thevayana roles-a add/edit pannikalam
+    const roles = ["Data Analyst", "Power BI Developer", "SQL Intern", "AI Enthusiast"];
     let roleIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
@@ -135,84 +178,28 @@ document.addEventListener('DOMContentLoaded', () => {
       const currentRole = roles[roleIndex];
       
       if (isDeleting) {
-        typedRole.textContent = currentRole.substring(0, charIndex - 1);
         charIndex--;
       } else {
-        typedRole.textContent = currentRole.substring(0, charIndex + 1);
         charIndex++;
       }
 
-      let typeSpeed = isDeleting ? 50 : 100;
+      typeWriterElement.textContent = currentRole.substring(0, charIndex);
+
+      let typingSpeed = isDeleting ? 50 : 100; // Type panra speed & Azhikkira speed
 
       if (!isDeleting && charIndex === currentRole.length) {
-        typeSpeed = 2000; // Wait before deleting
+        typingSpeed = 2000; // Oru word mudinjathum 2 seconds wait pannum
         isDeleting = true;
       } else if (isDeleting && charIndex === 0) {
         isDeleting = false;
         roleIndex = (roleIndex + 1) % roles.length;
-        typeSpeed = 500; // Wait before typing next word
+        typingSpeed = 500; // Pudhu word start aaga half second wait pannum
       }
 
-      setTimeout(typeEffect, typeSpeed);
+      setTimeout(typeEffect, typingSpeed);
     }
+
+    // Start the typing effect
     setTimeout(typeEffect, 1000);
   }
-
-
-  // --- 7. TERMINAL CODE MOCKUP EFFECT ---
-  const terminalCode = document.getElementById('terminalCode');
-  if (terminalCode) {
-    terminalCode.textContent = "import pandas as pd\nimport matplotlib.pyplot as plt\n\n# Analyzing Britannia Sales Data\ndf = pd.read_csv('sales.csv')\nprint(df.describe())";
-  }
-
-
-  // --- 8. FOOTER DYNAMIC YEAR ---
-  const yearSpan = document.getElementById('year');
-  if (yearSpan) {
-    yearSpan.textContent = new Date().getFullYear();
-  }
-
-
-  // --- 9. CONTACT FORM DEMO SUBMIT ---
-  const form = document.getElementById('contactForm');
-  const formStatus = document.getElementById('formStatus');
-  
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      // Temporary success message for demo
-      formStatus.textContent = "Thank you! Your message has been sent.";
-      formStatus.className = "form-status is-success";
-      form.reset();
-      
-      setTimeout(() => {
-        formStatus.textContent = "";
-      }, 4000);
-    });
-  }
-
 });
-// --- 11. ACTIVE MENU LINK (SCROLL SPY) ---
-  const sections = document.querySelectorAll('section[id]');
-  const navLinksArray = document.querySelectorAll('.nav-link');
-
-  window.addEventListener('scroll', () => {
-    let current = '';
-    
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      
-      // 150px offset to change active state smoothly before reaching the exact section
-      if (scrollY >= (sectionTop - 150)) { 
-        current = section.getAttribute('id');
-      }
-    });
-
-    navLinksArray.forEach(link => {
-      link.classList.remove('is-active'); // Pazhaya active line-a remove panrom
-      if (link.getAttribute('href') === `#${current}`) {
-        link.classList.add('is-active'); // Puthu section-ku blue line-a add panrom
-      }
-    });
-  });
